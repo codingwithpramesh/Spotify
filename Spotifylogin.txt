@@ -1,0 +1,32 @@
+ var data = _context.Register.FirstOrDefault(x => x.Email == Register.Email && x.password == Register.password);
+
+        /*  var claims = new List<Claim>()
+          {
+              new Claim(ClaimTypes.NameIdentifier, Register.Name),
+             
+             
+          };*/
+
+            var identity = new ClaimsIdentity(new[]
+            {
+              new Claim(ClaimTypes.Email, Register.Email),
+              new Claim(ClaimTypes.Role, Register.Roles.ToString())
+            }  , CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+             HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal).Wait();
+
+           // HttpContext.Session.SetString("Email", Register.Email);
+
+            if(data.Roles == Data.Enum.Roles.Admin)
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+            else if(data.Roles == Data.Enum.Roles.User)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login","Account");
+            }
+
